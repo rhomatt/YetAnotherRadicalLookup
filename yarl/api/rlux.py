@@ -1,7 +1,11 @@
-# coding:utf-8
 # creates an expression tree from a radical lookup expression (rlux)
 # information for how to build parse tree referenced here: https://runestone.academy/runestone/books/published/pythonds/Trees/ParseTree.html
 from enum import Enum
+import sys
+
+def printjp(string):
+    out = string + '\n'
+    sys.stdout.buffer.write(out.encode('utf8'))
 
 class Rlux:
     def __init__(self, exp):
@@ -27,7 +31,7 @@ class Rlux:
 
         for c in exp:
             if c in bkt.values(): # opening bracket
-                stack.push(c)
+                stack.append(c)
             elif c in bkt: # closing bracket
                 top = stack.pop()
                 while top != bkt[c]:
@@ -35,7 +39,7 @@ class Rlux:
             elif c in ops: # operator
                 while stack and ops[stack[-1]] > ops[c]:
                     out += stack.pop()
-                stack.push(c)
+                stack.append(c)
             else: # a character
                 out += c
 
@@ -46,4 +50,4 @@ class Rlux:
 
 if __name__ == "__main__":
     exp = Rlux("学「三」")
-    print(exp.postexp)
+    printjp(exp.postexp)
