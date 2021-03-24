@@ -1,0 +1,1 @@
+This package uses the RADKFILE/KRADFILE dictionary files, and can be found here: https://www.edrdg.org/krad/kradinf.html. These files are the property of the Electronic Dictionary Research and Development Group, and are used in conformance with the Group's licence, which can be found here: https://www.edrdg.org/edrdg/licence.html.
