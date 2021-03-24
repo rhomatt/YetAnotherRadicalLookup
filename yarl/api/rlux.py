@@ -1,5 +1,3 @@
-# creates an expression tree from a radical lookup expression (rlux)
-# information for how to build parse tree referenced here: https://runestone.academy/runestone/books/published/pythonds/Trees/ParseTree.html
 from enum import Enum
 import sys
 
