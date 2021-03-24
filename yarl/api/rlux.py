@@ -7,47 +7,121 @@ def printjp(string):
     out = string + '\n'
     sys.stdout.buffer.write(out.encode('utf8'))
 
+class Block:
+    def __init__(self, val):
+        self.val = val
+        self.next = None
+
+    def connect(self, block):
+        self.next = block
+
+    def transition(self, string, index):
+        if index >= len(string):
+            return []
+        if string[index] == self.val:
+            return [(self.next, index+1)]
+
+
+class WildBlock(Block):
+    def __init__(self, val):
+        super().__init__(val)
+
+    def transition(self, string, index):
+        return [(self.next, index+1)]
+
+
+class QuestionBlock(Block):
+    def __init__(self, val):
+        super().__init__(val)
+
+    def transition(self, string, index):
+        return [(self.next, index+1),
+                (self.next, index)]
+
+
+
+class StarBlock(Block):
+    def __init__(self, val):
+        super().__init__(val)
+
+    def transition(self, string, index):
+        return [(self, index+1),
+                (self.next, index),
+                (self.next, index+1)]
+
+
+
+class AllBlock(Block):
+    def __init__(self, val):
+        # val in this case should be a set of all chars we need to see
+        super().__init__(val) 
+
+    def transition(self, string, index):
+        char = string[index]
+        charparts = parts[char] # TODO parts is a dict, key: a kanji, val: set of parts of that kanji
+        if index >= len(string):
+            return []
+        if all([v in charparts for v in val]):
+            return [(self.next, index+1)]
+        
+
 class Rlux:
     def __init__(self, exp):
-        self.postexp = self.__postfix(exp)
+        self.blockexp = None # root
+        cur = None
 
-    # tokenizes an expression. return a list, where each val is a tuple (type, val)
-    def __postfix(self, exp):
-        stack = []
-        out = ''
-        ops = { # key is op, val is precedence
-                '|': 0,
-                '.': 1,
-                '?': 2,
-                '*': 2,
-                '&': 3,
-                }
-        bkt = { # corresponding brackets
-                ')': '(',
-                ']': '[', 
-                '}': '{',
-                '」': '「', # this is what bracket gets replaced with for a jp ime
-                }
-
+        collection = set()
         for c in exp:
-            if c in bkt.values(): # opening bracket
-                stack.append(c)
-            elif c in bkt: # closing bracket
-                top = stack.pop()
-                while top != bkt[c]:
-                    out += stack.pop()
-            elif c in ops: # operator
-                while stack and ops[stack[-1]] > ops[c]:
-                    out += stack.pop()
-                stack.append(c)
-            else: # a character
-                out += c
+            if c == '.':
+                block = WildBlock(c)
+            elif c == '?':
+                block = QuestionBlock(c)
+            elif c == '*':
+                block = StarBlock(c)
+            elif c == '(':
+                # TODO split the char up into it's parts per krad file
+                collection.add(c)
+                continue
+            elif c == ')':
+                block = AllBlock(collection)
+                collection = set() # reset this
+            else:
+                block = Block(c)
 
-        while stack:
-            out += stack.pop()
+            if not self.blockexp:
+                self.blockexp = block
+                cur = block
+            else:
+                cur.connect(block)
+                cur = block
 
-        return out
+    # given a set of kanji to look at, return only the kanji that match the exp
+    def search(self, adict):
+        matches = [] 
+        for word in adict:
+            fm = (self.blockexp, 0) # first move
+            stack = [fm]
+            visited = set(fm) # we don't want to visit the same thing
+            while stack:
+                state, index = stack.pop()
+                # goal check
+                if not state and index == len(word):
+                    matches.append(word)
+                    break
+                if not state:
+                    continue
+
+                for res in state.transition(word, index):
+                    if res in visited:
+                        continue
+                    visited.add(res)
+                    stack.append(res)
+        return matches
+
 
 if __name__ == "__main__":
-    exp = Rlux("学「三」")
-    printjp(exp.postexp)
+    exp = Rlux("高?校?")
+    adict = ["高校", "高校生"]
+    matches = exp.search(adict)
+    for match in matches:
+        printjp(match)
