@@ -1,11 +1,26 @@
 import sqlite3
 import sys
+import atexit
 
 def printjp(string):
     out = string + '\n'
     sys.stdout.buffer.write(out.encode('utf8'))
 
 con = sqlite3.connect('kanji.db')
+def exit_handler():
+    commit = input("commit changes? y/n")
+    if commit and commit.lower() == 'y':
+        con.commit()
+    con.close()
+    print("closing the connection...")
+atexit.register(exit_handler)
+
+
+print("Type commands() for help")
+def commands():
+    print("commands()")
+    print("initialize_tables()")
+    print("parse_krad(<filename>)")
 
 def initialize_tables():
     init_tables = [
@@ -61,7 +76,7 @@ def parse_krad(krad):
 
             for rad in radicals:
                 try:
-                    con.execute("INSERT INTO Radical VALUES ('%s')" % rad)
+                    con.execute("INSERT INTO Radicals VALUES ('%s')" % rad)
                 except:
                     printjp("Failed to insert radical %s" % rad)
             # it's possible that radical insertion may fail, as we may be inserting dupes. re-loop through
@@ -72,12 +87,4 @@ def parse_krad(krad):
                     con.execute("INSERT INTO Krad VALUES ('%s', '%s')" % (kanji, rad))
                 except:
                     printjp("Failed to create relation on %s and %s" % (kanji, rad))
-
-
-if __name__ == "__main__":
-    initialize_tables()
-    parse_krad('kradfile')
-    con.commit()
-    con.close()
-
 
