@@ -1,5 +1,7 @@
 from enum import Enum
 import sys
+import sqlite3
+import re
 
 def printjp(string):
     out = string + '\n'
@@ -8,10 +10,12 @@ def printjp(string):
 class Block:
     def __init__(self, val):
         self.val = val
+        self.index = 1
         self.next = None
 
     def connect(self, block):
         self.next = block
+        block.index += self.index+1
 
     def transition(self, string, index):
         if index >= len(string):
@@ -65,6 +69,7 @@ class AllBlock(Block):
 
 class Rlux:
     def __init__(self, exp):
+        self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
         cur = None
 
@@ -93,6 +98,22 @@ class Rlux:
                 cur.connect(block)
                 cur = block
 
+    # from the expression, creates the string we will use directly in our query
+    def __create_query_str(self, exp):
+        querystr = re.sub('\(.*\))', '_' exp)
+        querystr = re.sub('\?', '_' querystr)
+        querystr = re.sub('\*', '%' querystr)
+        return querystr
+        
+
+    def __generate_query():
+        query = """
+        SELECT w.lemma
+        FROM word w
+        WHERE w.lemma LIKE %s
+        """ % self.querystr
+
+    
     # given a set of kanji to look at, return only the kanji that match the exp
     def search(self, adict):
         matches = [] 
