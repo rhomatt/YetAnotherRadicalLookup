@@ -7,6 +7,15 @@ def printjp(string):
     out = string + '\n'
     sys.stdout.buffer.write(out.encode('utf8'))
 
+class Block:
+    def __init__(self, block):
+        self.strokes = None
+        self.leniency = 0
+        
+        for c in block:
+            pass
+
+
 
 class Rlux:
     def __init__(self, exp):
@@ -14,17 +23,12 @@ class Rlux:
         self.blockexp = None # root
         self.blocks = []
         cur = None
+        blocks = re.findall('\([^()]*\))', exp)
+        for block in blocks:
+            self.blocks.append(Block(block))
+            
 
-        collection = set()
-        for c in exp:
-            if c == '(':
-                # TODO split the char up into it's parts per krad file
-                collection.add(c)
-            elif c == ')':
-                block = AllBlock(collection)
-                collection = set() # reset this
-            else:
-                collection.add(c)
+
 
     # from the expression, creates the string we will use directly in our query
     def __create_query_str(self, exp):
@@ -34,7 +38,7 @@ class Rlux:
         return querystr
         
 
-    def __generate_query():
+    def generate_query():
         query = """
         SELECT w.lemma
         FROM word w
