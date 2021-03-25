@@ -71,6 +71,7 @@ class Rlux:
     def __init__(self, exp):
         self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
+        self.blocks = []
         cur = None
 
         collection = set()
@@ -113,6 +114,10 @@ class Rlux:
         WHERE w.lemma LIKE %s
         """ % self.querystr
 
+        
+
+        query += ';'
+        return query
     
     # given a set of kanji to look at, return only the kanji that match the exp
     def search(self, adict):
