@@ -1,6 +1,5 @@
 from enum import Enum
 import sys
-import sqlite3
 import re
 
 def printjp(string):
@@ -9,11 +8,43 @@ def printjp(string):
 
 class Block:
     def __init__(self, block):
-        self.strokes = None
+        printjp(block)
+        self.minstrokes = None
+        self.maxstrokes = None
         self.leniency = 0
+        self.kanji = set(re.findall(u"[\u3400-\u4DB5\u4E00-\u9FCB\uF900-\uFA6A]", block))
+        self.radicals = set()
         
-        for c in block:
-            pass
+        find_radicals_query = "SELECT r.radical FROM Radicals r LEFT JOIN Krad kr ON r.radical = kr.radical WHERE "
+        rad_from_kanji = "kr.kanji = %s AND %s NOT IN (SELECT radical FROM Radicals) "
+
+        for k in self.kanji:
+            find_radicals_query += rad_from_kanji
+            if rad_from_kanji[:2] != "OR":
+                rad_from_kanji = "OR " + rad_from_kanji # each subsequent time, there will be an OR added
+
+        #for k in self.kanji:
+        #    find_radicals_query += ("UNION SELECT '%s' " % k)
+        printjp(find_radicals_query)
+
+        # QUERY DB HERE
+
+        # TODO replace japanese IME symbols with standard symbols
+
+        # find max and minstrokes (if applicable)
+        maxstrokes = re.match(r"-\d+", block)
+        if maxstrokes:
+            self.maxstrokes = int(maxstrokes.group(0)[1:])
+        minstrokes = re.match(r"\d+-", block)
+        if minstrokes:
+            self.minstrokes = int(minstrokes.group(0)[:-1])
+
+        leniency = re.match(r"[Ll]\d+", block)
+        if leniency:
+            self.leniency = int(leniency.group(0)[1:])
+
+        # http://www.localizingjapan.com/blog/2012/01/20/regular-expressions-for-japanese-text/
+        # found information on japanese unicode here 
 
 
 
@@ -23,7 +54,7 @@ class Rlux:
         self.blockexp = None # root
         self.blocks = []
         cur = None
-        blocks = re.findall('\([^()]*\))', exp)
+        blocks = re.findall(r'\(\w*\)', exp)
         for block in blocks:
             self.blocks.append(Block(block))
             
@@ -32,9 +63,9 @@ class Rlux:
 
     # from the expression, creates the string we will use directly in our query
     def __create_query_str(self, exp):
-        querystr = re.sub('\([^()]*\))', '_' exp)
-        querystr = re.sub('\?', '_' querystr)
-        querystr = re.sub('\*', '%' querystr)
+        querystr = re.sub(r'\(\w*\)', '_', exp)
+        querystr = re.sub(r'\?', '_', querystr)
+        querystr = re.sub(r'\*', '%', querystr)
         return querystr
         
 
@@ -75,8 +106,7 @@ class Rlux:
 
 
 if __name__ == "__main__":
-    exp = Rlux("高?校?")
-    adict = ["高校", "高校生"]
-    matches = exp.search(adict)
-    for match in matches:
-        printjp(match)
+    exp = Rlux("高(木父校)")
+    exp = Rlux("(込)")
+    exp = Rlux("(込道)")
+
