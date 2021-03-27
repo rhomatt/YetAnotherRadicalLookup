@@ -1,6 +1,7 @@
 from enum import Enum
 import sys
 import re
+from django.db import connection
 
 def printjp(string):
     out = string + '\n'
@@ -15,16 +16,17 @@ class Block:
         self.kanji = set(re.findall(u"[\u3400-\u4DB5\u4E00-\u9FCB\uF900-\uFA6A]", block))
         self.radicals = set()
         
-        find_radicals_query = "SELECT r.radical FROM Radicals r LEFT JOIN Krad kr ON r.radical = kr.radical WHERE "
-        rad_from_kanji = "kr.kanji = %s AND %s NOT IN (SELECT radical FROM Radicals) "
+        find_radicals_query = "SELECT r.radical FROM Radicals r LEFT JOIN Krad kr ON r.radical = kr.radical WHERE\n"
+        rad_from_kanji = "kr.kanji = %s AND %s NOT IN (SELECT radical FROM Radicals)\n"
 
         for k in self.kanji:
             find_radicals_query += rad_from_kanji
             if rad_from_kanji[:2] != "OR":
                 rad_from_kanji = "OR " + rad_from_kanji # each subsequent time, there will be an OR added
 
-        #for k in self.kanji:
-        #    find_radicals_query += ("UNION SELECT '%s' " % k)
+        for k in self.kanji:
+            find_radicals_query += "UNION SELECT %s\n"
+        find_radicals_query += "EXCEPT SELECT k.kanji FROM Kanji k LEFT JOIN Radicals r2 ON k.kanji = r2.radical WHERE r2.radical IS NULL;"
         printjp(find_radicals_query)
 
         # QUERY DB HERE
