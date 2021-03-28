@@ -15,10 +15,11 @@ class KanjiView(APIView):
 class WordView(APIView):
     serializer_class = WordSerializer
 
-    def post(self, request, format=None):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            query, params = Rlux(serializer.data.get('lemma')).generate_query()
-            queryset = Word.objects.raw(query, params=params)
+    def get(self, request):
+        searchexp = ""
+        if "exp" in request.query_params:
+            searchexp = request.query_params["exp"]
+        query, params = Rlux(searchexp).generate_query()
+        queryset = Word.objects.raw(query, params=params)
 
-            return Response([q.lemma for q in queryset])
+        return Response([q.lemma for q in queryset])
