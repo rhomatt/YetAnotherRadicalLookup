@@ -13,6 +13,8 @@ class Block:
         self.minstrokes = None
         self.maxstrokes = None
         self.leniency = 0
+        # http://www.localizingjapan.com/blog/2012/01/20/regular-expressions-for-japanese-text/
+        # found information on japanese unicode here 
         self.kanji = set(re.findall(u"[\u3400-\u4DB5\u4E00-\u9FCB\uF900-\uFA6A]", block))
         self.radicals = set()
         
@@ -45,8 +47,6 @@ class Block:
         if leniency:
             self.leniency = int(leniency.group(0)[1:])
 
-        # http://www.localizingjapan.com/blog/2012/01/20/regular-expressions-for-japanese-text/
-        # found information on japanese unicode here 
 
 
 
