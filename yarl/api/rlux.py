@@ -85,15 +85,15 @@ class Rlux:
     # returns the query we need, and the the variable info
     def generate_query(self):
         query = """
-            SELECT w.lemma
-            FROM word w 
-            WHERE w.lemma LIKE :querystr
+            SELECT wordid, lang, lemma, pron, pos
+            FROM word 
+            WHERE lemma LIKE :querystr
         """
 
         var_to_kanji = {"querystr": self.querystr}
         if self.blocks:
             sub_query = """
-                AND SUBSTR(w.lemma, %d, 1)  IN (
+                AND SUBSTR(lemma, %d, 1)  IN (
                 %s
                 )\n
             """
