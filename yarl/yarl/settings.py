@@ -17,7 +17,6 @@ from pathlib import PurePath
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ROOT_DIR = BASE_DIR.parent
-print("ROOT_DIR", ROOT_DIR)
 
 
 # Quick-start development settings - unsuitable for production
