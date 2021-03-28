@@ -8,18 +8,14 @@ def printjp(string):
     sys.stdout.buffer.write(out.encode('utf8'))
 
 class Block:
-    def __init__(self, block, pos):
+    def __init__(self, block, pos, params):
         self.minstrokes = None
         self.maxstrokes = None
         self.leniency = 0
         self.pos = pos
         # http://www.localizingjapan.com/blog/2012/01/20/regular-expressions-for-japanese-text/
         # found information on japanese unicode here 
-        count = 0
-        self.kanji = {}
-        for k in re.findall(u"[\u3400-\u4DB5\u4E00-\u9FCB\uF900-\uFA6A]", block):
-            self.kanji[k] = ':p' + str(pos) + 'r' + str(count)
-            count += 1
+        self.kanji = set(re.findall(u"[\u3400-\u4DB5\u4E00-\u9FCB\uF900-\uFA6A]", block))
             # we will need these for queries later to avoid SQL injection
         
         # find max and minstrokes (if applicable)
@@ -39,12 +35,15 @@ class Block:
         rad_from_kanji = "kr.kanji = %s AND %s NOT IN (SELECT radical FROM Radical)\n"
 
         for k in self.kanji:
-            find_radicals_query += (rad_from_kanji % (self.kanji[k], self.kanji[k]))
+            find_radicals_query += rad_from_kanji
+            params.append(k)
+            params.append(k)
             if rad_from_kanji[:2] != "OR":
                 rad_from_kanji = "OR " + rad_from_kanji # each subsequent time, there will be an OR added
 
         for k in self.kanji:
-            find_radicals_query += ("UNION SELECT %s\n" % self.kanji[k])
+            find_radicals_query += "UNION SELECT %s\n"
+            params.append(k)
 
         find_radicals_query += "EXCEPT SELECT kanji FROM Kanji LEFT JOIN Radical ON kanji = radical WHERE radical IS NULL)"
         find_radicals_query += """
@@ -69,9 +68,10 @@ class Rlux:
         self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
         self.blocks = []
+        self.params = [self.querystr] # passed into the query later. I would do the :var version, but sqlite doens't allow that...
         blocks = re.finditer(r'\(\w*\)', exp)
         for block in blocks:
-            self.blocks.append(Block(block.group(0), block.start(0) + 1))
+            self.blocks.append(Block(block.group(0), block.start(0) + 1, self.params))
 
 
     # from the expression, creates the string we will use directly in our query
@@ -87,10 +87,9 @@ class Rlux:
         query = """
             SELECT wordid, lang, lemma, pron, pos
             FROM word 
-            WHERE lemma LIKE :querystr
+            WHERE lemma LIKE %s 
         """
 
-        var_to_kanji = {"querystr": self.querystr}
         if self.blocks:
             sub_query = """
                 AND SUBSTR(lemma, %d, 1)  IN (
@@ -100,13 +99,10 @@ class Rlux:
             
             for block in self.blocks:
                 query += sub_query % (block.pos, block.radicals)
-                for kanji,vname in block.kanji.items():
-                    var_to_kanji[vname] = kanji
-
 
         query += ';'
 
-        return query, var_to_kanji
+        return query, self.params
     
     # given a set of kanji to look at, return only the kanji that match the exp
     def search(self, adict):
