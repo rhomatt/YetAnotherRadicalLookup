@@ -17,7 +17,7 @@
     "webpack-cli": "^4.6.0"
   },
   "scripts": {
-    "dev": "webpack --mode development --watch",
+    "start": "webpack --mode development --watch",
     "build": "webpack --mode production"
   }
 }

@@ -7,13 +7,25 @@ module.exports = {
     path: path.resolve(__dirname, "./static/frontend"),
     filename: "[name].js",
   },
-  module: {
+ module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(jsx|js)$/,
+        include: path.resolve(__dirname, 'src'),
         exclude: /node_modules/,
-      },
-    ],
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                "targets": "defaults" 
+              }],
+              '@babel/preset-react'
+            ]
+          }
+        }]
+      }
+    ]
   },
   optimization: {
     minimize: true,
