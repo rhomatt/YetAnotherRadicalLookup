@@ -132,7 +132,7 @@ if __name__ == "__main__":
     exp = Rlux("高(木父)")
     query, vrs = exp.generate_query()
     printjp(query)
-    for var, kanji in vrs.items():
+    for kanji in vrs:
         printjp(kanji)
 
     exp = Rlux("(込)")
