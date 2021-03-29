@@ -4,26 +4,25 @@ const webpack = require("webpack");
 module.exports = {
   entry: "./src/index.js",
   output: {
-    path: path.resolve(__dirname, "./static/frontend"),
+    path: path.resolve(__dirname, "./static"),
     filename: "main.js",
   },
  module: {
     rules: [
       {
-        test: /\.(jsx|js)$/,
-        include: path.resolve(__dirname, 'src'),
+        test: /\.(js)$/,
         exclude: /node_modules/,
-        use: [{
+        use: {
           loader: 'babel-loader',
-          options: {
-            presets: [
+	  options: {
+	    presets: [
               ['@babel/preset-env', {
                 "targets": "defaults" 
               }],
               '@babel/preset-react'
             ]
-          }
-        }]
+	  }
+        },
       }
     ]
   },
