@@ -1,4 +1,7 @@
 yarl-env
 *.swp
 *.zip
+*.gz
 node_modules*
+__pycache__*
+*.db
