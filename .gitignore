@@ -1,3 +1,4 @@
 yarl-env
 *.swp
 *.zip
+node_modules*

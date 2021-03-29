@@ -1,0 +1,14 @@
+{
+  "name": "YetAnotherRadicalLookup",
+  "version": "0.0.1",
+  "description": "Allows lookup of kanji by parts",
+  "main": "index.js",
+  "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "react": "^17.0.2"
+  },
+  "devDependencies": {
+    "webpack": "^5.28.0",
+    "webpack-cli": "^4.6.0"
+  }
+}
