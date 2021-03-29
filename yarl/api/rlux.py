@@ -70,8 +70,11 @@ class Rlux:
         self.blocks = []
         self.params = [self.querystr] # passed into the query later. I would do the :var version, but sqlite doens't allow that...
         blocks = re.finditer(r'\(\w*\)', exp)
+        positions = [pos.start(0)+1 for pos in re.finditer(r'_', self.querystr)]
+        count = 0
         for block in blocks:
-            self.blocks.append(Block(block.group(0), block.start(0) + 1, self.params))
+            self.blocks.append(Block(block.group(0), positions[count], self.params))
+            count+=1
 
 
     # from the expression, creates the string we will use directly in our query
@@ -129,7 +132,7 @@ class Rlux:
 
 
 if __name__ == "__main__":
-    exp = Rlux("高(木父)")
+    exp = Rlux("(大)(口)")
     query, vrs = exp.generate_query()
     printjp(query)
     for kanji in vrs:
