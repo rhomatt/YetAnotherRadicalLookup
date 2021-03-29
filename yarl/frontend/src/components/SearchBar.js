@@ -24,7 +24,7 @@ export default class SearchBar extends React.Component{
 		return <Grid container spacing={2}>
 					<Grid item xs={12} align="center">
 						<form onSubmit={e => this.getSearchResults(e)}>
-							<TextField onChange={(e) => this.setState({searchexp: e.target.value})}/>
+							<TextField autoFocus onChange={(e) => this.setState({searchexp: e.target.value})}/>
 							<Button variant="contained" onClick={e => this.getSearchResults(e)}>Search</Button>
 						</form>
 					</Grid>
