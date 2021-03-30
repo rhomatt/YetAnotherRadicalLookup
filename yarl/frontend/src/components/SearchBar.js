@@ -1,7 +1,6 @@
 import React from 'react';
-import TextField from '@material-ui/core/TextField';
-import Grid from '@material-ui/core/Grid';
-import Button from '@material-ui/core/Button';
+import {InputBase, AppBar, Toolbar, IconButton, Grid, FormControl} from '@material-ui/core';
+import SearchIcon from '@material-ui/icons/Search';
 import Results from './Results';
 
 export default class SearchBar extends React.Component{
@@ -23,10 +22,20 @@ export default class SearchBar extends React.Component{
 
 	render() {
 		return (
-				<form onSubmit={e => this.getSearchResults(e)}>
-					<TextField autoFocus onChange={(e) => this.handleInput(e)}/>
-					<Button variant="contained" onClick={e => this.getSearchResults(e)}>Search</Button>
-				</form>
+			<AppBar position="static">
+				<Toolbar component="form" onSubmit={e => this.getSearchResults(e)}>
+					<FormControl fullWidth>
+						<InputBase 
+							autoFocus 
+							onChange={e => this.handleInput(e)} 
+							placeholder="Search" 
+						/>
+					</FormControl>
+					<IconButton onClick={e => this.getSearchResults(e)} >
+						<SearchIcon/>
+					</IconButton>
+				</Toolbar>
+			</AppBar>
 		)
 	}
 }
