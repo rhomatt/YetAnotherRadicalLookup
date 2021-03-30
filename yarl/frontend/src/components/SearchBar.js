@@ -7,30 +7,26 @@ import Results from './Results';
 export default class SearchBar extends React.Component{
 	constructor(props){
 		super(props);
-		this.state = {
-			searchexp: "",
-			searchres: [],
-		}
+		this.handleInput = props.handleInput;
+		this.setResults = props.setResults;
+		this.getExp = props.getExp;
 	}
+
+	
 
 	getSearchResults(e){
 		e.preventDefault();
-		fetch("/api/search" + "?exp=" + this.state.searchexp)
+		fetch("/api/search" + "?exp=" + this.getExp())
 			.then(response => response.json())
-			.then(results => this.setState({searchres: results}))
+			.then(results => this.setResults(results))
 	}
 
 	render() {
-		return <Grid container spacing={2}>
-					<Grid item xs={12} align="center">
-						<form onSubmit={e => this.getSearchResults(e)}>
-							<TextField autoFocus onChange={(e) => this.setState({searchexp: e.target.value})}/>
-							<Button variant="contained" onClick={e => this.getSearchResults(e)}>Search</Button>
-						</form>
-					</Grid>
-					<Grid item xs={12} align="center">
-						<Results results={this.state.searchres}/>
-					</Grid>
-				</Grid>;
+		return (
+				<form onSubmit={e => this.getSearchResults(e)}>
+					<TextField autoFocus onChange={(e) => this.handleInput(e)}/>
+					<Button variant="contained" onClick={e => this.getSearchResults(e)}>Search</Button>
+				</form>
+		)
 	}
 }

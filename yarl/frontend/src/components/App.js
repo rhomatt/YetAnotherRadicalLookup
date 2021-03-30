@@ -1,6 +1,6 @@
 import React from 'react';
-import SearchBar from './SearchBar';
+import HomePage from './HomePage';
 
 export default function App(){
-    return <SearchBar/>
+    return <HomePage/>
 }

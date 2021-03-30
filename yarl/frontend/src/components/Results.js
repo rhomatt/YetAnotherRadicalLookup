@@ -8,12 +8,13 @@ import Grid from '@material-ui/core/Grid';
 export default class Results extends React.Component{
 	constructor(props){
 		super(props);
+		this.getResults = props.getResults
 	}
 
 	render(){
 		return <List component="nav">
 					<ListSubheader>Results</ListSubheader>
-					{this.props.results.map(res => (
+					{this.getResults().map(res => (
 						<ListItem>
 							<ListItemText primary={res} align="center"/>
 						</ListItem>
