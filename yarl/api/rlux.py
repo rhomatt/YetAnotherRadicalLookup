@@ -66,6 +66,8 @@ class Rlux:
     def __init__(self, exp):
         exp = re.sub(r'（', '(', exp) # replace japanese parens
         exp = re.sub(r'）', ')', exp)
+        exp = re.sub(r'？', '?', exp)
+        exp = re.sub(r'＊', '*', exp)
 
         self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
