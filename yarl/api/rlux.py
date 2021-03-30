@@ -58,13 +58,15 @@ class Block:
         """
         self.radicals = find_radicals_query
 
-        # TODO replace japanese IME symbols with standard symbols
 
 
 
 
 class Rlux:
     def __init__(self, exp):
+        exp = re.sub(r'（', '(', exp) # replace japanese parens
+        exp = re.sub(r'）', ')', exp)
+
         self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
         self.blocks = []
