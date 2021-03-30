@@ -5,3 +5,4 @@ yarl-env
 node_modules*
 __pycache__*
 *.db
+main.js*
