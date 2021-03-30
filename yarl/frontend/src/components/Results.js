@@ -1,9 +1,6 @@
 import React from 'react';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemText from '@material-ui/core/ListItemText';
-import ListSubheader from '@material-ui/core/ListSubheader';
-import Grid from '@material-ui/core/Grid';
+import { List, ListItem, ListItemText, ListSubheader, Grid } from '@material-ui/core/';
+import Result from './Result';
 
 export default class Results extends React.Component{
 	constructor(props){
@@ -16,7 +13,7 @@ export default class Results extends React.Component{
 					<ListSubheader>Results</ListSubheader>
 					{this.getResults().map(res => (
 						<ListItem>
-							<ListItemText primary={res}/>
+							<Result word={res}/>
 						</ListItem>
 						)
 					)}
