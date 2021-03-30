@@ -16,7 +16,7 @@ export default class Results extends React.Component{
 					<ListSubheader>Results</ListSubheader>
 					{this.getResults().map(res => (
 						<ListItem>
-							<ListItemText primary={res} align="center"/>
+							<ListItemText primary={res}/>
 						</ListItem>
 						)
 					)}

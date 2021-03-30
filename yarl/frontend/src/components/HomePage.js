@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchBar from './SearchBar';
 import Results from './Results';
+import {Grid} from '@material-ui/core';
 
 export default class HomePage extends React.Component{
 	constructor(props){
@@ -28,10 +29,18 @@ export default class HomePage extends React.Component{
 	}
 
 	render(){return (
-			<>
-				<SearchBar getExp={() => this.getExp()} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
-				<Results getResults={() => this.getResults()}/>
-			</>
+			<Grid container direction="column">
+				<Grid item>
+					<SearchBar getExp={() => this.getExp()} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
+				</Grid>
+				{this.state.searchres.length > 0
+				? <Grid item>
+					<Results getResults={() => this.getResults()}/>
+				</Grid>
+				: <>
+				</>
+				}
+			</Grid>
 		)
 	}
 }
