@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db import connection
 from .models import Kanji, Word
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -20,6 +21,9 @@ class WordView(APIView):
         if "exp" in request.query_params:
             searchexp = request.query_params["exp"]
         query, params = Rlux(searchexp).generate_query()
-        queryset = Word.objects.raw(query, params=params)
+        with connection.cursor() as cursor:
+            cursor.execute(query, params)
+            queryset = cursor.fetchall()
+        # queryset = Word.objects.raw(query, params=params)
 
-        return Response([q.lemma for q in queryset])
+        return Response([q[1] for q in queryset])
