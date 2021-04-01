@@ -48,13 +48,12 @@ class Block:
         find_radicals_query += "EXCEPT SELECT kanji FROM Kanji LEFT JOIN Radical ON kanji = radical WHERE radical IS NULL)"
         find_radicals_query += """
             SELECT k.kanji
-            FROM Radical r, (SELECT COUNT(*) givenrads FROM rads)
-            LEFT JOIN Krad kr
-            ON kr.radical = r.radical
+            FROM (SELECT COUNT(*) count FROM rads) AS givenrads, radical r
+            LEFT JOIN Krad kr ON kr.radical = r.radical
             LEFT JOIN Kanji k ON kr.kanji = k.kanji
-            WHERE r.radical in rads
-            GROUP BY k.kanji
-            HAVING COUNT(r.radical) >= givenrads
+            WHERE r.radical IN (SELECT * FROM rads)
+            GROUP BY k.kanji, givenrads.count
+            HAVING COUNT(r.radical) >= givenrads.count
         """
         self.radicals = find_radicals_query
 
@@ -92,7 +91,7 @@ class Rlux:
     # returns the query we need, and the the variable info
     def generate_query(self):
         query = """
-            SELECT wordid, lang, lemma, pron, pos
+            SELECT id, lemma
             FROM word 
             WHERE lemma LIKE %s 
         """
@@ -136,7 +135,7 @@ class Rlux:
 
 
 if __name__ == "__main__":
-    exp = Rlux("(大)(口)")
+    exp = Rlux("高(木)")
     query, vrs = exp.generate_query()
     printjp(query)
     for kanji in vrs:
