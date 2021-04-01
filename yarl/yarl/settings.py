@@ -28,7 +28,7 @@ SECRET_KEY = 'sv(&r%x0!3xfa7m14ppwqo8b=w!se7xhfm5+v7bf-yjg4h_i%^'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["64.154.38.10"]
 
 
 # Application definition
@@ -81,9 +81,12 @@ WSGI_APPLICATION = 'yarl.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': ROOT_DIR / PurePath('kanji_metadata', 'wnjpn.db'),
-        #'NAME': BASE_DIR / 'db.sqlite3'
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'japanese',
+        'USER': 'django',
+        'PASSWORD': 'django',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
