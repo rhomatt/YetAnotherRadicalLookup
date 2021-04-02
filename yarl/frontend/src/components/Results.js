@@ -5,14 +5,16 @@ import Result from './Result';
 export default class Results extends React.Component{
 	constructor(props){
 		super(props);
-		this.getResults = props.getResults
 	}
 
 	render(){
+		const results = this.props.results;
+		console.log("from results: " + results)
+		let count = 0;
 		return <List component="nav">
 					<ListSubheader>Results</ListSubheader>
-					{this.getResults().map(res => (
-						<ListItem>
+					{results.map(res => (
+						<ListItem key={res+(count++)}>
 							<Result word={res}/>
 						</ListItem>
 						)

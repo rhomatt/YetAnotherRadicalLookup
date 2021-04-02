@@ -6,21 +6,25 @@ import Results from './Results';
 export default class SearchBar extends React.Component{
 	constructor(props){
 		super(props);
-		this.handleInput = props.handleInput;
-		this.setResults = props.setResults;
-		this.getExp = props.getExp;
+		// this.setResults = props.setResults;
+		// this.getExp = props.getExp;
+	}
+
+	handleInput(e){
+		this.props.handleInput(e);
+	}
+
+	getSearchResults(e){
+		e.preventDefault();
+		fetch("/api/search" + "?exp=" + this.props.exp)
+			.then(response => response.json())
+			.then(results => this.props.setResults(results))
 	}
 
 	
 
-	getSearchResults(e){
-		e.preventDefault();
-		fetch("/api/search" + "?exp=" + this.getExp())
-			.then(response => response.json())
-			.then(results => this.setResults(results))
-	}
-
 	render() {
+		const exp = this.props.exp;
 		return (
 			<AppBar position="static">
 				<Toolbar component="form" onSubmit={e => this.getSearchResults(e)}>

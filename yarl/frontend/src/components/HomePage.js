@@ -17,6 +17,7 @@ export default class HomePage extends React.Component{
 	}
 
 	setSearchResults(results){
+		console.log(results)
 		this.setState({searchres: results})
 	}
 
@@ -28,14 +29,15 @@ export default class HomePage extends React.Component{
 		return this.state.searchres;
 	}
 
-	render(){return (
+	render(){
+		return (
 			<Grid container direction="column">
 				<Grid item>
-					<SearchBar getExp={() => this.getExp()} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
+					<SearchBar exp={this.state.searchexp} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
 				</Grid>
 				{this.state.searchres.length > 0
 				? <Grid item>
-					<Results getResults={() => this.getResults()}/>
+					<Results results={this.state.searchres}/>
 				</Grid>
 				: <>
 				</>
