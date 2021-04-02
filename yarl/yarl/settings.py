@@ -27,9 +27,9 @@ ROOT_DIR = BASE_DIR.parent
 SECRET_KEY = 'sv(&r%x0!3xfa7m14ppwqo8b=w!se7xhfm5+v7bf-yjg4h_i%^'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["64.154.38.10", "hensaku.xyz"]
+ALLOWED_HOSTS = ["localhost", "64.154.38.10", "hensaku.xyz"]
 
 
 # Application definition
@@ -86,7 +86,7 @@ DATABASES = {
         'NAME': 'japanese',
         'USER': 'django',
         'PASSWORD': 'django',
-        'HOST': 'localhost',
+        'HOST': 'hensaku.xyz' if not DEBUG else 'localhost',
         'PORT': '5432',
     }
 }
