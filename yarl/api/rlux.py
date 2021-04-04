@@ -63,29 +63,35 @@ class Block:
 
 class Rlux:
     def __init__(self, exp):
-        exp = re.sub(r'（', '(', exp) # replace japanese parens
-        exp = re.sub(r'）', ')', exp)
-        exp = re.sub(r'？', '?', exp)
-        exp = re.sub(r'＊', '*', exp)
-
+        exp = self.__filter_exp(exp)
         self.querystr = self.__create_query_str(exp)
         self.blockexp = None # root
         self.blocks = []
         self.params = [self.querystr] # passed into the query later. I would do the :var version, but sqlite doens't allow that...
-        blocks = re.finditer(r'\(\w*\)', exp)
-        positions = [pos.start(0)+1 for pos in re.finditer(r'_', self.querystr)]
+        blocks = re.finditer(r'\(\w*\)', exp) # find the contents of the original blocks
+        positions = [pos.start(0)+1 for pos in re.finditer(r'#', self.querystr)]
         count = 0
         for block in blocks:
             self.blocks.append(Block(block.group(0), positions[count], self.params))
             count+=1
+        self.querystr = re.sub(r'#', '_', self.querystr)
+        self.params[0] = self.querystr # since '#' represents a block, the first string parameter must be updated to work as a sql like statement
+
+    def __filter_exp(self, exp):
+        exp = re.sub(r'（', '(', exp) # replace japanese parens
+        exp = re.sub(r'）', ')', exp)
+        exp = re.sub(r'？', '?', exp)
+        exp = re.sub(r'＊', '*', exp)
+        exp = re.sub(r'#', '', exp) # we use this as a special symbol later denoting block positions. don't allow user to input this
+        return exp
 
 
     # from the expression, creates the string we will use directly in our query
     def __create_query_str(self, exp):
-        querystr = re.sub(r'\(\w*\)', '_', exp)
-        querystr = re.sub(r'\?', '_', querystr)
-        querystr = re.sub(r'\*', '%', querystr)
-        return querystr
+        exp = re.sub(r'\(\w*\)', '#', exp)
+        exp = re.sub(r'\?', '_', exp)
+        exp = re.sub(r'\*', '%', exp)
+        return exp
         
 
     # returns the query we need, and the the variable info
@@ -136,6 +142,7 @@ class Rlux:
 
 if __name__ == "__main__":
     exp = Rlux("高(木)")
+    exp = Rlux("自？（正）")
     query, vrs = exp.generate_query()
     printjp(query)
     for kanji in vrs:
