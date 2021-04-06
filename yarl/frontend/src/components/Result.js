@@ -4,7 +4,7 @@ import { Card, CardContent, Typography } from '@material-ui/core/';
 export default class Result extends React.Component{
 	constructor(props){
 		super(props);
-		this.word = props.word
+		this.result = props.result
 	}
 
 	render(){
@@ -12,7 +12,10 @@ export default class Result extends React.Component{
 			<Card>
 				<CardContent>
 					<Typography variant="h4">
-						{this.word}
+						{this.result.readings}
+					</Typography>
+					<Typography variant="h4">
+						{this.result.definitions}
 					</Typography>
 				</CardContent>
 			</Card>

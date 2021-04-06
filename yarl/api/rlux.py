@@ -69,12 +69,12 @@ class Rlux:
         self.blocks = []
         self.params = [self.querystr] # passed into the query later. I would do the :var version, but sqlite doens't allow that...
         blocks = re.finditer(r'\(\w*\)', exp) # find the contents of the original blocks
-        positions = [pos.start(0)+1 for pos in re.finditer(r'#', self.querystr)]
+        positions = [pos.start(0)+1 for pos in re.finditer(r'\#', self.querystr)]
         count = 0
         for block in blocks:
             self.blocks.append(Block(block.group(0), positions[count], self.params))
             count+=1
-        self.querystr = re.sub(r'#', '_', self.querystr)
+        self.querystr = re.sub(r'\#', '_', self.querystr)
         self.params[0] = self.querystr # since '#' represents a block, the first string parameter must be updated to work as a sql like statement
 
     def __filter_exp(self, exp):
@@ -82,7 +82,7 @@ class Rlux:
         exp = re.sub(r'）', ')', exp)
         exp = re.sub(r'？', '?', exp)
         exp = re.sub(r'＊', '*', exp)
-        exp = re.sub(r'#', '', exp) # we use this as a special symbol later denoting block positions. don't allow user to input this
+        exp = re.sub(r'\#', '', exp) # we use this as a special symbol later denoting block positions. don't allow user to input this
         return exp
 
 
@@ -97,8 +97,13 @@ class Rlux:
     # returns the query we need, and the the variable info
     def generate_query(self):
         query = """
-            SELECT id, lemma
-            FROM word 
+            WITH words AS (SELECT id, string_agg(lemma, ', ') words FROM word GROUP BY id),
+            defs AS (SELECT id, string_agg(def, ', ') defs FROM definition GROUP BY id)
+
+            SELECT w.id, words.words readings, defs.defs definitions
+            FROM word w
+                LEFT JOIN words ON words.id = w.id
+                LEFT JOIN defs ON defs.id = w.id
             WHERE lemma LIKE %s 
         """
 
@@ -112,7 +117,7 @@ class Rlux:
             for block in self.blocks:
                 query += sub_query % (block.pos, block.radicals)
 
-        query += ';'
+        query += 'LIMIT 50;'
 
         return query, self.params
     

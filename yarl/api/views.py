@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.db import connection
-from .models import Kanji, Word
+from .models import Kanji, Result
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import KanjiSerializer, WordSerializer
+from .serializers import KanjiSerializer, ResultSerializer
 from .rlux import Rlux
 
 # Create your views here.
@@ -13,17 +13,15 @@ class KanjiView(APIView):
     def get(self, request, format=None):
         serializer = self.serializer_class(data=request.data)
 
-class WordView(APIView):
-    serializer_class = WordSerializer
+class ResultView(APIView):
 
     def get(self, request):
         searchexp = ""
         if "exp" in request.query_params:
             searchexp = request.query_params["exp"]
         query, params = Rlux(searchexp).generate_query()
-        with connection.cursor() as cursor:
-            cursor.execute(query, params)
-            queryset = cursor.fetchall()
+        queryset = Result.objects.raw(query, params)
+        serializer = ResultSerializer(queryset, many=True)
         # queryset = Word.objects.raw(query, params=params)
 
-        return Response([q[1] for q in queryset])
+        return Response(serializer.data)

@@ -10,12 +10,11 @@ export default class Results extends React.Component{
 	render(){
 		const results = this.props.results;
 		console.log("from results: " + results)
-		let count = 0;
 		return <List component="nav">
 					<ListSubheader>Results</ListSubheader>
 					{results.map(res => (
-						<ListItem key={res+(count++)}>
-							<Result word={res}/>
+						<ListItem key={res.id}>
+							<Result result={res}/>
 						</ListItem>
 						)
 					)}

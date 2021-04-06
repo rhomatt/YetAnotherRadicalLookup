@@ -31,3 +31,8 @@ class Word(models.Model):
     lemma = models.TextField()
     pron = models.TextField(null=True)
     pos = models.TextField()
+
+class Result(models.Model):
+    id = models.IntegerField(primary_key=True)
+    readings = models.TextField()
+    definitions = models.TextField()
