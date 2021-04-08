@@ -78,6 +78,7 @@ class Rlux:
         self.params[0] = self.querystr # since '#' represents a block, the first string parameter must be updated to work as a sql like statement
 
     def __filter_exp(self, exp):
+        exp = exp.strip()
         exp = re.sub(r'（', '(', exp) # replace japanese parens
         exp = re.sub(r'）', ')', exp)
         exp = re.sub(r'？', '?', exp)
@@ -146,8 +147,8 @@ class Rlux:
 
 
 if __name__ == "__main__":
-    exp = Rlux("高(木)")
-    exp = Rlux("自？（正）")
+    exp = Rlux("        高(木)")
+    exp = Rlux("        自？（正）")
     query, vrs = exp.generate_query()
     printjp(query)
     for kanji in vrs:
