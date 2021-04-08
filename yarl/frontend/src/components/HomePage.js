@@ -1,6 +1,7 @@
 import React from 'react';
 import SearchBar from './SearchBar';
 import Results from './Results';
+import About from './About';
 import {Grid} from '@material-ui/core';
 
 export default class HomePage extends React.Component{
@@ -9,6 +10,7 @@ export default class HomePage extends React.Component{
 		this.state = {
 			searchexp: '',
 			searchres: [],
+			showAbout: true,
 		}
 	}
 
@@ -19,6 +21,7 @@ export default class HomePage extends React.Component{
 	setSearchResults(results){
 		console.log(results)
 		this.setState({searchres: results})
+		this.setState({showAbout: false})
 	}
 
 	getExp(){
@@ -39,8 +42,13 @@ export default class HomePage extends React.Component{
 				? <Grid item>
 					<Results results={this.state.searchres}/>
 				</Grid>
-				: <>
-				</>
+				: 
+				<></>
+				}
+				{this.state.showAbout // This stuff is temporary while I work on getting actual help pages up
+				? <About/> 
+				: 
+				<></>
 				}
 			</Grid>
 		)
