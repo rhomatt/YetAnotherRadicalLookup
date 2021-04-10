@@ -26,8 +26,11 @@ export default class SearchBar extends React.Component{
 			.then(results => this.props.setResults(results))
 	}
 
-	toggleMenu(){
-		this.setState({toggled: !this.state.toggled});
+	toggleMenu(val){
+		if(val != null)
+			this.setState({toggled: val});
+		else
+			this.setState({toggled: !this.state.toggled});
 	}
 
 	render() {

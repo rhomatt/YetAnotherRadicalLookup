@@ -1,14 +1,17 @@
 import React from 'react';
-import { Drawer, IconButton, Divider } from '@material-ui/core';
-import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import { Drawer, IconButton, List, ListItem, ListItemIcon, ListItemText, Divider } from '@material-ui/core';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
+import MonetizationOnOutlinedIcon from '@material-ui/icons/MonetizationOnOutlined';
 
 export default class SideBar extends React.Component {
 	constructor(props){
 		super(props);
 	}
 
-	toggleMenu(){
-		this.props.setToggled()
+	toggleMenu(val){
+		this.props.setToggled(val)
 	}
 
 	render(){
@@ -19,9 +22,35 @@ export default class SideBar extends React.Component {
 			anchor="left"
 			open={toggled}
 			>
-				<IconButton onClick={() => this.toggleMenu()}>
-					<ChevronRightIcon/>
+				<IconButton style={{marginLeft: "50%"}}edge="end" onClick={() => this.toggleMenu(false)}>
+					<ChevronLeftIcon/>
 				</IconButton>
+				<Divider/>
+				<List>
+					{ 
+						[
+							{
+								icon: <InfoOutlinedIcon/>, 
+								tag: "About",
+							}, 
+							{
+								icon: <GroupOutlinedIcon/>, 
+								tag: "Acknowledgements",
+							}, 
+							{
+								icon: <MonetizationOnOutlinedIcon/>, 
+								tag: "Donate",
+							}, 
+						].map(item =>
+							<ListItem button key={item.tag}>
+								<ListItemIcon>
+									{item.icon}
+								</ListItemIcon>
+								<ListItemText primary={item.tag}/>
+							</ListItem>
+						)
+					}
+				</List>
 			</Drawer>
 		);
 	}
