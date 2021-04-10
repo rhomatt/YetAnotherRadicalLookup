@@ -2,7 +2,7 @@ import React from 'react';
 import SearchBar from './SearchBar';
 import Results from './Results';
 import About from './About';
-import {Grid} from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 
 export default class HomePage extends React.Component{
 	constructor(props){
@@ -34,23 +34,23 @@ export default class HomePage extends React.Component{
 
 	render(){
 		return (
-			<Grid container direction="column">
-				<Grid item>
-					<SearchBar exp={this.state.searchexp} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
+			<>
+				<SearchBar exp={this.state.searchexp} handleInput={(e) => this.handleSearchInput(e)} setResults={(res) => this.setSearchResults(res)}/>
+				<Grid container direction="column">
+					{this.state.searchres.length > 0
+					? <Grid item>
+						<Results results={this.state.searchres}/>
+					</Grid>
+					: 
+					<></>
+					}
+					{this.state.showAbout // This stuff is temporary while I work on getting actual help pages up
+					? <About/> 
+					: 
+					<></>
+					}
 				</Grid>
-				{this.state.searchres.length > 0
-				? <Grid item>
-					<Results results={this.state.searchres}/>
-				</Grid>
-				: 
-				<></>
-				}
-				{this.state.showAbout // This stuff is temporary while I work on getting actual help pages up
-				? <About/> 
-				: 
-				<></>
-				}
-			</Grid>
+			</>
 		)
 	}
 }
