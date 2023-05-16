@@ -1,6 +1,7 @@
 import React from 'react';
 import HomePage from './HomePage';
 import About from './About';
+import Acknowledgements from './Acknowledgements';
 import {
     BrowserRouter as Router,
     Switch,
@@ -14,11 +15,11 @@ export default function App(){
                 <Route path='/About'>
                     <About/>
                 </Route>
-                <Route path='/'>
-                    <HomePage/>
-                </Route>
                 <Route path='/Acknowledgements'>
                     <Acknowledgements/>
+                </Route>
+                <Route path='/'>
+                    <HomePage/>
                 </Route>
             </Switch>
         </Router>
