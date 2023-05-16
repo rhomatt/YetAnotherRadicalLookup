@@ -40,10 +40,10 @@ export default class SideBar extends React.Component {
                                 icon: <GroupOutlinedIcon/>, 
                                 tag: "Acknowledgements",
                             }, 
-                            {
-                                icon: <MonetizationOnOutlinedIcon/>, 
-                                tag: "Donate",
-                            }, 
+                            // {
+                            //     icon: <MonetizationOnOutlinedIcon/>, 
+                            //     tag: "Donate",
+                            // }, 
                         ].map(item =>
                             <Link to={item.tag}>
                                 <ListItem button key={item.tag}>
