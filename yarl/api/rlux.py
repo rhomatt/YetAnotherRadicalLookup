@@ -47,12 +47,11 @@ class Block:
 
         find_radicals_query += "EXCEPT SELECT kanji FROM Kanji LEFT JOIN Radical ON kanji = radical WHERE radical IS NULL)"
         find_radicals_query += """
-            SELECT k.kanji
+            SELECT kr.kanji
             FROM (SELECT COUNT(*) count FROM rads) AS givenrads, radical r
             LEFT JOIN Krad kr ON kr.radical = r.radical
-            LEFT JOIN Kanji k ON kr.kanji = k.kanji
             WHERE r.radical IN (SELECT * FROM rads)
-            GROUP BY k.kanji, givenrads.count
+            GROUP BY kr.kanji, givenrads.count
             HAVING COUNT(r.radical) >= givenrads.count
         """
         self.radicals = find_radicals_query
