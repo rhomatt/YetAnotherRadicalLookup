@@ -1,6 +1,4 @@
 import sqlite3
-import sqlalchemy
-from sqlalchemy import text
 import sys
 import atexit
 from bs4 import BeautifulSoup
@@ -87,7 +85,7 @@ def initialize_tables():
     """
         CREATE TABLE definition (
             id INTEGER,
-            definition TEXT
+            def TEXT
         );
     """,
             ]
@@ -240,8 +238,10 @@ def parse_jmdic(jmdic):
 if __name__ == "__main__":
     initialize_tables()
     print("parsing radkfile")
+    parse_radk('radkfile')
     parse_radk('radkfile2')
     print("parsing kradfile")
+    parse_krad('kradfile')
     parse_krad('kradfile2')
     print("parsing kanjidic")
     parse_kanjidic('kanjidic2.xml')
