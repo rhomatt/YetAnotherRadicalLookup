@@ -98,8 +98,8 @@ class Rlux:
     # returns the query we need, and the the variable info
     def generate_query(self):
         query = """
-            WITH words AS (SELECT id, string_agg(lemma, ', ') words FROM word GROUP BY id),
-            defs AS (SELECT id, string_agg(def, ', ') defs FROM definition GROUP BY id)
+            WITH words AS (SELECT id, group_concat(lemma, ', ') words FROM word GROUP BY id),
+            defs AS (SELECT id, group_concat(def, ', ') defs FROM definition GROUP BY id)
 
             SELECT w.id, words.words readings, defs.defs definitions
             FROM word w
