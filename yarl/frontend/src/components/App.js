@@ -17,6 +17,9 @@ export default function App(){
                 <Route path='/'>
                     <HomePage/>
                 </Route>
+                <Route path='/Acknowledgements'>
+                    <Acknowledgements/>
+                </Route>
             </Switch>
         </Router>
     );
