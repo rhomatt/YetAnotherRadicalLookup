@@ -31,6 +31,7 @@ class Block:
         if leniency:
             self.leniency = int(leniency.group(0)[1:])
 
+        # grab all radicals of a character, not including itself if it is a radical
         find_radicals_query = "WITH rads AS (SELECT r.radical FROM Radical r LEFT JOIN Krad kr ON r.radical = kr.radical WHERE\n"
         rad_from_kanji = "kr.kanji = %s AND %s NOT IN (SELECT radical FROM Radical)\n"
 
@@ -41,11 +42,13 @@ class Block:
             if rad_from_kanji[:2] != "OR":
                 rad_from_kanji = "OR " + rad_from_kanji # each subsequent time, there will be an OR added
 
+        # grab self, unless not a radical
         for k in self.kanji:
             find_radicals_query += "UNION SELECT %s\n"
             params.append(k)
-
         find_radicals_query += "EXCEPT SELECT kanji FROM Kanji LEFT JOIN Radical ON kanji = radical WHERE radical IS NULL)"
+
+        # grab all kanji that have at least as many radicals as provided
         find_radicals_query += """
             SELECT kr.kanji
             FROM (SELECT COUNT(*) count FROM rads) AS givenrads, radical r
@@ -97,19 +100,23 @@ class Rlux:
     # returns the query we need, and the the variable info
     def generate_query(self):
         query = """
+            -- words have multiple readings
             WITH words AS (SELECT id, group_concat(lemma, ', ') words FROM word GROUP BY id),
+            -- words have multiple definitions
             defs AS (SELECT id, group_concat(def, ', ') defs FROM definition GROUP BY id)
 
             SELECT w.id, words.words readings, defs.defs definitions
             FROM word w
                 LEFT JOIN words ON words.id = w.id
                 LEFT JOIN defs ON defs.id = w.id
+            -- word must match SQL LIKE of given string
             WHERE lemma LIKE %s 
         """
 
         if self.blocks:
             sub_query = """
-                AND SUBSTR(lemma, %d, 1)  IN (
+                -- kanji at position x must contain all radicals provided in block
+                AND SUBSTR(lemma, %d, 1) IN (
                 %s
                 )\n
             """
